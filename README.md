@@ -43,4 +43,8 @@ subscribe API tersebut. Kalau 429, kuotanya habis / dibatasi.
 
 ## Lisensi
 
-Untuk pemakaian pribadi dan edukasi, hanya untuk data publik.
+Copyright (c) 2026 Muhammad Jeksen — All Rights Reserved.
+
+Lihat file `LICENSE`. Kode di repositori ini tidak boleh disalin,
+didistribusikan, dimodifikasi, atau diunggah ulang tanpa izin tertulis
+dari pemiliknya. Pemakaian data tetap hanya untuk data publik.
