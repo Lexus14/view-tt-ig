@@ -188,6 +188,15 @@ def api_get(cfg, host, path, params):
 
 
 def show_profile(title, data):
+    # TikWM / RapidAPI mengembalikan code=-1 + msg saat username salah,
+    # bukan HTTP error. Tampilkan pesannya dengan jelas, bukan "tidak dikenali".
+    if isinstance(data, dict) and data.get("code") not in (None, 0, "0"):
+        if "data" not in data or not data.get("data"):
+            print(f"API: {data.get('msg', 'username tidak valid')}")
+            print("Periksa ejaan username persis seperti di profil TikTok/INSTAGRAM,")
+            print("tanpa @, tanpa spasi. Coba juga dengan username lain yang pasti ada")
+            print("untuk memastikan script-nya jalan (misal: tiktok).")
+            return
     username = find_value(data, ["uniqueId", "username", "user_name"])
     name = find_value(data, ["nickname", "full_name", "name"])
     bio = find_value(data, ["signature", "biography", "bio"])
