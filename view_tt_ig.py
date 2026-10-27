@@ -187,6 +187,15 @@ def api_get(cfg, host, path, params):
         return None
 
 
+def unwrap_count(value):
+    """INSTAGRAM sering mengembalikan {'count': 1421}, bukan angka langsung."""
+    if isinstance(value, dict):
+        for key in ("count", "value", "total"):
+            if key in value:
+                return value[key]
+    return value
+
+
 def show_profile(title, data):
     # TikWM / RapidAPI mengembalikan code=-1 + msg saat username salah,
     # bukan HTTP error. Tampilkan pesannya dengan jelas, bukan "tidak dikenali".
@@ -200,11 +209,17 @@ def show_profile(title, data):
     username = find_value(data, ["uniqueId", "username", "user_name"])
     name = find_value(data, ["nickname", "full_name", "name"])
     bio = find_value(data, ["signature", "biography", "bio"])
-    followers = find_value(
-        data, ["followerCount", "follower_count", "followers", "edge_followed_by"]
+    followers = unwrap_count(
+        find_value(
+            data, ["followerCount", "follower_count", "followers", "edge_followed_by"]
+        )
     )
-    following = find_value(data, ["followingCount", "following_count", "following"])
-    posts = find_value(data, ["videoCount", "video_count", "media_count", "posts"])
+    following = unwrap_count(
+        find_value(data, ["followingCount", "following_count", "following"])
+    )
+    posts = unwrap_count(
+        find_value(data, ["videoCount", "video_count", "media_count", "posts"])
+    )
     verified = find_value(data, ["verified", "is_verified"])
     private = find_value(data, ["privateAccount", "is_private", "private"])
     avatar = find_value(data, ["avatarLarger", "avatarMedium", "avatarThumb", "profile_pic_url"])
