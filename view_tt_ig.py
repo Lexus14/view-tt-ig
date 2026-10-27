@@ -284,6 +284,9 @@ def instagram_profile(cfg):
 def show_comments(title, items, limit=20):
     print(f"--- {title} ({len(items)} ditemukan, ditampilkan maks {limit}) ---")
     for i, item in enumerate(items[:limit], 1):
+        # Format GraphQL Instagram: {"node": {...komentar...}}
+        if isinstance(item, dict) and isinstance(item.get("node"), dict):
+            item = item["node"]
         if isinstance(item, dict):
             user = find_value(item, ["username", "user_name", "author", "owner_username"])
             text = find_value(item, ["text", "comment", "caption", "body"])
@@ -314,14 +317,19 @@ def post_comments(cfg):
         shortcode = input("Masukkan shortcode postingan INSTAGRAM > ").strip()
         if not shortcode:
             return
+        # Dokumentasi resmi instagram-cheapest (kolapihub):
+        # media_comments memakai parameter "code", bukan "shortcode".
+        # Memakai nama parameter yang salah membuat API mengembalikan list kosong.
         data = api_get(
             cfg,
             cfg["instagram_host"],
             cfg["instagram_comments_path"],
-            {"shortcode": shortcode},
+            {"code": shortcode},
         )
         if data:
-            items = find_list(data, ["comments", "comment_list", "data"])
+            items = find_list(
+                data, ["comments", "comment_list", "edges", "data"]
+            )
             show_comments("Komentar postingan INSTAGRAM", items)
     else:
         print("Pilihan tidak dikenal.")
